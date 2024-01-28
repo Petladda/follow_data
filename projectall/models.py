@@ -12,9 +12,9 @@ class AppUser(AbstractUser) :
           max_length=255,
           choices=AppRole.choices,
      )
-     id_student = models.CharField(max_length=8,default='')
-     first_name = models.CharField(max_length=255, default='')
-     last_name =  models.CharField(max_length=255, default='')
+     id_student = models.CharField(max_length=8)
+     first_name = models.CharField(max_length=255)
+     last_name =  models.CharField(max_length=255)
 
 class Subject(models.Model):
      #group_id = models.AutoField(primary_key=True, null=False,blank=True)
