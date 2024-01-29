@@ -1,5 +1,4 @@
 # from django.shortcuts import redirect, render
-from rest_framework.permissions import IsAuthenticated
 # from rest_framework import viewsets
 # from django.contrib.auth import get_user_model
 
@@ -32,11 +31,24 @@ from rest_framework.permissions import IsAuthenticated
 #         form = ProjectGroupForm()
 
 
-from .models import AppUser
-from .serializers import UserSerializer
+from .models import AppUser,DailyScrum,ProductBacklogs
+from .serializers import UserSerializer ,DailyScrumSerializer,BlacklogsSerializer
+from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics
 
 class UserViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = AppUser.objects.all()
+
+
+class DailyViewSet(ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = DailyScrumSerializer
+    queryset = DailyScrum.objects.all()
+
+class BlacklogsViewSet(ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = BlacklogsSerializer
+    queryset = ProductBacklogs.objects.all()

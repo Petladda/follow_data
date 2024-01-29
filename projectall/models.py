@@ -40,7 +40,7 @@ class Student(models.Model):
 
 class ProductBacklogs(models.Model):
      product = models.ForeignKey(Project , on_delete=models.SET_NULL, null=True,blank=True)
-     #name_backlog = models.CharField(max_length=255,default='')
+     title_product = models.CharField(max_length=255,default='')
      date_to_do = models.DateField(default=datetime.date.today)
      STATUS_CHOICES = (
         ('todo', 'To Do'),
@@ -71,6 +71,9 @@ class  DailyScrum(models.Model) :
      ]
      note = models.CharField(max_length=4, choices=NOTE_CHOICES)
      others = models.TextField(max_length=255)
+
+     def __str__(self):
+          return str(self.student)
 
 class Tasks(models.Model):
      product_backlogs = models.ForeignKey(ProductBacklogs, on_delete=models.CASCADE)
