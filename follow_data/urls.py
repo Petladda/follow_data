@@ -26,6 +26,7 @@ router = DefaultRouter()
 router.register("users",UserViewSet)
 router.register("dailyscrum",DailyViewSet)
 router.register("Productbacklogs",BlacklogsViewSet)
+
 # from projectall.views import UserViewSet
 
 urlpatterns = [
@@ -33,8 +34,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include('projectall.urls')),
     path('api/', include(router.urls)),
-    
+
 ]
 
-urlpatterns += router.urls

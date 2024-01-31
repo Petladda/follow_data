@@ -22,9 +22,9 @@ class Subject(models.Model):
      subject_name = models.CharField(max_length=255, default='')
      amount = models.PositiveBigIntegerField(default=0)
     
-     '''def __str__(self):
+     def __str__(self):
           return str(self.subject_name)
-'''
+
 class Project(models.Model) :
      subject = models.ForeignKey(Subject , on_delete=models.SET_NULL, null=True,blank=True)
      users = models.ManyToManyField(AppUser)
