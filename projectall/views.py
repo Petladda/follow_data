@@ -39,46 +39,46 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth import get_user_model, login, logout
+from rest_framework.authtoken.models import Token
 
 #register
 class UserRegister(APIView):
-	permission_classes = (permissions.AllowAny,)
-	def post(self, request):
-		serializer = UserSerializer()
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.create()
-			if user:
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request):
+        serializer = UserSerializer()
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.create()
+            if user:
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 #login	
-class UserLogin(APIView):
-	permission_classes = (permissions.AllowAny,)
+# class UserLogin(APIView):
+# 	permission_classes = (permissions.AllowAny,)
 
-	def post(self, request):
-		data = request.data
-		
-		serializer = UserLoginSerializer(data=data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.check_user(data)
-			login(request, user)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+# 	def post(self, request):
+# 		data = request.data
+# 		serializer = UserLoginSerializer(data=data)
+# 		if serializer.is_valid(raise_exception=True):
+# 			user = serializer.check_user(data)
+# 			token = Token.objects.create(user=user)
+# 			return Response(serializer.data, status=status.HTTP_200_OK)
 
 #logout
 class UserLogout(APIView):
-	permission_classes = (permissions.AllowAny,)
-	authentication_classes = ()
-	def post(self, request):
-		logout(request)
-		return Response(status=status.HTTP_200_OK)
-	
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    def post(self, request):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
+    
 #userview
 class UserView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	
-	def get(self, request):
-		serializer = UserSerializer(request.user)
-		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+    permission_classes = (permissions.IsAuthenticated,)
+    
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
 
 class UserViewSet(ModelViewSet):
@@ -97,3 +97,30 @@ class BlacklogsViewSet(ModelViewSet):
     permission_classes = [AllowAny]
     serializer_class = BlacklogsSerializer
     queryset = ProductBacklogs.objects.all()
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes,authentication_classes
+
+from .models import Subject,Project
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def hello_world(request,id):
+    count = request.data.get('count')
+    subject = Subject.objects.get(pk=id)
+
+    
+    for i in range(count) :
+        project = Project.objects.create(
+            subject=subject,
+            project_name="group" 
+        )
+        project.save()
+    
+    
+    

@@ -1,0 +1,8 @@
+###
+POST  http://127.0.0.1:8000/api/subject/9/create
+Content-Type: application/json
+
+{
+    "count" : 3
+}
+###

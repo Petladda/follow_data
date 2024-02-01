@@ -17,10 +17,8 @@ class AppUser(AbstractUser) :
      last_name =  models.CharField(max_length=255)
 
 class Subject(models.Model):
-     #group_id = models.AutoField(primary_key=True, null=False,blank=True)
      teacher = models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
      subject_name = models.CharField(max_length=255, default='')
-     amount = models.PositiveBigIntegerField(default=0)
     
      def __str__(self):
           return str(self.subject_name)
