@@ -15,6 +15,8 @@ class AppUser(AbstractUser) :
      id_student = models.CharField(max_length=8)
      first_name = models.CharField(max_length=255)
      last_name =  models.CharField(max_length=255)
+     def __str__(self):
+          return str(self.username)
 
 class Subject(models.Model):
      teacher = models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
@@ -25,15 +27,12 @@ class Subject(models.Model):
 
 class Project(models.Model) :
      subject = models.ForeignKey(Subject , on_delete=models.SET_NULL, null=True,blank=True)
-     users = models.ManyToManyField(AppUser)
+     members = models.ManyToManyField(AppUser)
      project_name = models.CharField(max_length=255, default='')
      trello_link = models.URLField(null=True,blank=True)
      figma_link = models.URLField(null=True,blank=True)
 
-class Student(models.Model):
-     student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
-     group = models.ForeignKey(Subject , on_delete=models.SET_NULL, null=True,blank=True)
-    
+
 
 
 class ProductBacklogs(models.Model):
@@ -54,6 +53,17 @@ class ProductBacklogs(models.Model):
      )
      important = models.CharField(max_length=5, choices=IM_CHOICES, default='low')
 
+class Tasks(models.Model):
+     product_backlogs = models.ForeignKey(ProductBacklogs, on_delete=models.CASCADE)
+     task_id = models.CharField(max_length=255)
+     task_name = models.CharField(max_length=255)
+     STATUS_CHOICES = (
+          ('todo', 'To Do'),
+          ('doing', 'Doing'),
+          ('done', 'Done'),
+     )
+     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default='todo')
+
 
 class  DailyScrum(models.Model) :
      student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
@@ -73,16 +83,14 @@ class  DailyScrum(models.Model) :
      def __str__(self):
           return str(self.student)
 
-class Tasks(models.Model):
-     product_backlogs = models.ForeignKey(ProductBacklogs, on_delete=models.CASCADE)
-     task_id = models.CharField(max_length=255)
-     task_name = models.CharField(max_length=255)
-     STATUS_CHOICES = (
-          ('todo', 'To Do'),
-          ('doing', 'Doing'),
-          ('done', 'Done'),
-     )
-     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default='todo')
+
+
+
+class Student(models.Model):
+     student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
+     group = models.ForeignKey(Subject , on_delete=models.SET_NULL, null=True,blank=True)
+    
+
 
 
 """

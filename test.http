@@ -6,3 +6,10 @@ Content-Type: application/json
     "count" : 3
 }
 ###
+
+POST http://127.0.0.1:8000/api/subject/8/project/42/join
+Content-Type: application/json
+
+{
+    "project_id" : 42
+}

@@ -20,12 +20,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework.routers import DefaultRouter
-from projectall.views import UserViewSet,DailyViewSet,BlacklogsViewSet
+from projectall.views import UserViewSet,DailyViewSet
 
 router = DefaultRouter()
 router.register("users",UserViewSet)
 router.register("dailyscrum",DailyViewSet)
-router.register("Productbacklogs",BlacklogsViewSet)
+
+
 
 # from projectall.views import UserViewSet
 

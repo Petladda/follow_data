@@ -16,10 +16,10 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ["group","student"]
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ["project_name","subject"]
+    list_display = ["id","project_name","subject"]
 
     filter_horizontal = (
-        "users",
+        "members",
     
     )
 

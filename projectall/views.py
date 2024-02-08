@@ -31,8 +31,8 @@
 #         form = ProjectGroupForm()
 
 
-from .models import AppUser,DailyScrum,ProductBacklogs
-from .serializers import UserSerializer ,DailyScrumSerializer,BlacklogsSerializer,UserLoginSerializer
+from .models import AppUser,DailyScrum,ProductBacklogs,Subject
+from .serializers import UserSerializer ,DailyScrumSerializer,BacklogsSerializer,UserLoginSerializer,SubjectSerializer,ProjectSerializer
 from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -53,16 +53,16 @@ class UserRegister(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 #login	
-# class UserLogin(APIView):
-# 	permission_classes = (permissions.AllowAny,)
+class UserLogin(APIView):
+	permission_classes = (permissions.AllowAny,)
 
-# 	def post(self, request):
-# 		data = request.data
-# 		serializer = UserLoginSerializer(data=data)
-# 		if serializer.is_valid(raise_exception=True):
-# 			user = serializer.check_user(data)
-# 			token = Token.objects.create(user=user)
-# 			return Response(serializer.data, status=status.HTTP_200_OK)
+	def post(self, request):
+		data = request.data
+		serializer = UserLoginSerializer(data=data)
+		if serializer.is_valid(raise_exception=True):
+			user = serializer.check_user(data)
+			token = Token.objects.create(user=user)
+			return Response(serializer.data, status=status.HTTP_200_OK)
 
 #logout
 class UserLogout(APIView):
@@ -93,10 +93,9 @@ class DailyViewSet(ModelViewSet):
     serializer_class = DailyScrumSerializer
     queryset = DailyScrum.objects.all()
 
-class BlacklogsViewSet(ModelViewSet):
-    permission_classes = [AllowAny]
-    serializer_class = BlacklogsSerializer
-    queryset = ProductBacklogs.objects.all()
+
+
+
 
 
 from rest_framework.decorators import api_view
@@ -105,22 +104,86 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes,authentication_classes
 
-from .models import Subject,Project
+from .models import Subject,Project    
+
+
+
+
 
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
-def hello_world(request,id):
+def create_project(request,id):
     count = request.data.get('count')
     subject = Subject.objects.get(pk=id)
+    user = AppUser.objects.get(role='TCH')
+    if user.role == 'TCH':
+        for i in range(count) :
+            project = Project.objects.create(
+                subject=subject,
+                project_name="group" 
+            )
+            project.save()
+    else:
+        return Response({"message": "You are not authorized to create projects"})
+
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def student_join(request,id,pid):
+    project = Project.objects.get(pk=pid)
+    project.members.add(
+            request.user
+        )
+    return Response({"message" : "OK"})
+    #project_id = request.data.get('project_id')
+    #if project_id == project :
+    #    project.members.add(
+    #        request.user
+    #    )
+    #else:
+    #    return Response({"message": "project ID is not match"})
+    
+
+class SubjectView(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = SubjectSerializer
+
+    def get_queryset(self):
+        subject = Subject.objects.all() 
+        return subject
 
     
-    for i in range(count) :
-        project = Project.objects.create(
-            subject=subject,
-            project_name="group" 
-        )
-        project.save()
+
+class ProjectView(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class  = ProjectSerializer
+
+    def get_queryset(self):
+        project = Project.objects.all() 
+        return project
     
+
+
+class product_backlogs(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class  = BacklogsSerializer
+    def get_queryset(self):
+        backlogs = ProductBacklogs.objects.all() 
+        return backlogs
     
+
+class DailyView(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class  = DailyScrumSerializer
+    def get_queryset(self):
+        scrum = Project.objects.all() 
+        return scrum
     
+    def post(self,request):
+        serializer = DailyScrumSerializer()
+        if serializer.is_valid():
+            serializer.save()
+        return Response(status=status.HTTP_200_OK)
