@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import fields,serializers
 from django.contrib.auth import get_user_model, authenticate
-from .models import AppUser,DailyScrum,ProductBacklogs,Subject,Project,Tasks
+from .models import AppUser,DailyScrum,ProductBacklog,Subject,Project,Task
 
 
 
@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = AppUser
-        fields = ['id','username','password','id_student' ,'first_name','last_name','role']
+        fields = ['id','username','password','id_student' ,'first_name','last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -41,37 +41,47 @@ class UserLoginSerializer(serializers.Serializer):
 
     
 #--------------------------------------TasksSerializer-------------------
-class TasksSerializer(serializers.ModelSerializer):
+class TaskSerializer(serializers.ModelSerializer):
     
     class Meta: 
-        model = Tasks
-        fields = ['id','product_backlogs','task_id','task_name','status']  
+        model = Task
+        fields = ['id','product_backlog','task_id','task_name','status']  
 
 #-------------------------------------BacklogsSerializer-----------------------
 class BacklogsSerializer(serializers.ModelSerializer):
-    tasks = TasksSerializer(many=True, read_only=True)
+    task_set = TaskSerializer(many=True, read_only=True)
     class Meta:
-        model = ProductBacklogs
-        fields = ['id','title_product','date_to_do','status','date_done','important','tasks']
+        model = ProductBacklog
+        fields = ['id','title_product','date_to_do','status','date_done','important','task_set']
+
 
 
 #-----------------------ProjectSerializer----------------
 class ProjectSerializer(serializers.ModelSerializer):
     members = UserSerializer(many=True, read_only=True)
-    products = BacklogsSerializer(many=True, read_only=True) 
+    productbacklog_set = BacklogsSerializer(many=True, read_only=True) 
 
     class Meta:
         model = Project
-        fields = ['id','members', 'project_name', 'trello_link', 'figma_link','products']
+        fields = ['id','members', 'project_name', 'trello_link', 'figma_link','productbacklog_set']
 
 #-------------------------SubjectSerializer----------------------
 class SubjectSerializer(serializers.ModelSerializer):
-    project = ProjectSerializer(many=True, read_only=True)
+    #project = ProjectSerializer(many=True, read_only=True)
     #teacher = UserSerializer(many=True, read_only=True)
     
     class Meta:
         model = Subject
-        fields = ['id', 'subject_name','teacher','project']
+        fields = ['id', 'subject_name','teacher']
+
+
+class SubjectWithProjectSerializer(serializers.ModelSerializer):
+    project_set = ProjectSerializer(many=True, read_only=True)
+    #teacher = UserSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Subject
+        fields = ['id', 'subject_name','teacher','project_set']
 
 
 

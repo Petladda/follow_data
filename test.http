@@ -1,5 +1,5 @@
 ###
-POST  http://127.0.0.1:8000/api/subject/9/create
+POST  http://127.0.0.1:8000/api/subject/19/create
 Content-Type: application/json
 
 {
@@ -7,9 +7,9 @@ Content-Type: application/json
 }
 ###
 
-POST http://127.0.0.1:8000/api/subject/8/project/42/join
+POST http://127.0.0.1:8000/api/subject/8/project/42/productbacklog-create
 Content-Type: application/json
 
 {
-    "project_id" : 42
+    "count" : 3
 }

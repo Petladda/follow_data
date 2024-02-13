@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from projectall.models import AppUser,Subject,Project,Student,DailyScrum,ProductBacklogs,Tasks
+from projectall.models import AppUser,Subject,Project,Student,DailyScrum,ProductBacklog,Task
 from django.contrib.auth.forms import (
     AdminPasswordChangeForm,
     UserChangeForm,
@@ -24,13 +24,13 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
 class ProductBacklogsAdmin(admin.ModelAdmin):
-    list_display = ["product","date_to_do","status","date_done","important"]
+    list_display = ["project","date_to_do","status","date_done","important"]
 
 class DailyScrumAdmin(admin.ModelAdmin):
     list_display = ["student","date","yesterday","today","problem","note","others"]
 
-class TasksAdmin(admin.ModelAdmin):
-    list_display = ["product_backlogs","task_id","task_name","status"]
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ["product_backlog","task_id","task_name","status"]
 
 
 class AppUserAdmin(UserAdmin):
@@ -64,5 +64,5 @@ admin.site.register(Subject,SubjectAdmin)
 admin.site.register(Project,ProjectAdmin)
 admin.site.register(Student,StudentAdmin)
 admin.site.register(DailyScrum,DailyScrumAdmin)
-admin.site.register(ProductBacklogs,ProductBacklogsAdmin)
-admin.site.register(Tasks,TasksAdmin)
+admin.site.register(ProductBacklog,ProductBacklogsAdmin)
+admin.site.register(Task,TaskAdmin)

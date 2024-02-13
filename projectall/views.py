@@ -31,8 +31,15 @@
 #         form = ProjectGroupForm()
 
 
-from .models import AppUser,DailyScrum,ProductBacklogs,Subject
-from .serializers import UserSerializer ,DailyScrumSerializer,BacklogsSerializer,UserLoginSerializer,SubjectSerializer,ProjectSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes,authentication_classes
+from .models import Subject,Project   
+from django.shortcuts import get_object_or_404
+from .models import AppUser,DailyScrum,ProductBacklog,Subject
+from .serializers import *
 from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -45,12 +52,14 @@ from rest_framework.authtoken.models import Token
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request):
-        serializer = UserSerializer()
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            user = serializer.create()
-            if user:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    
 
 #login	
 class UserLogin(APIView):
@@ -88,28 +97,153 @@ class UserViewSet(ModelViewSet):
 
 
 
-class DailyViewSet(ModelViewSet):
-    permission_classes = [AllowAny]
-    serializer_class = DailyScrumSerializer
-    queryset = DailyScrum.objects.all()
+
+#------------------------------task------------------------
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def get_task(request,id,pid,bid,tid):
+    tasks = Task.objects.get(pk=tid)
+    serializer = TaskSerializer(tasks)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def task_create(request,id,pid,bid):
+    serializer = TaskSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@authentication_classes([])
+@permission_classes([])
+def task_update(request,id,pid,bid,tid):
+    tasks = Task.objects.get(pk=tid)
+    serializer = TaskSerializer(instance=tasks,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def task_delete(request,id,pid,bid,tid):
+    tasks = Task.objects.get(pk=tid)
+    tasks.delete()
+    return Response("delete succsesfully!!!!")
+
+
+#------------------------------backlog----------------------
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def get_productbacklog_by_bid(request,id,pid,bid):
+    a_object = ProductBacklog.objects.get(pk=bid)
+    serializer = BacklogsSerializer(a_object)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def backlog_create(request,id,pid):
+    count = request.data.get('count')
+    project = Project.objects.get(pk=pid)
+    #serializer = BacklogsSerializer(data=request.data)
+    for i in range(count) :
+            backlog = ProductBacklog.objects.create(
+                project=project,
+                title_product="product backlog",
+                status=False
+            )
+            backlog.save()
+
+
+@api_view(['PUT'])
+@authentication_classes([])
+@permission_classes([])
+def backlog_update(request,id,pid,bid):
+    backlogs = ProductBacklog.objects.get(pk=bid)
+    serializer = BacklogsSerializer(instance=backlogs,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def backlog_delete(request,id,pid,bid):
+    backlogs = ProductBacklog.objects.get(pk=bid)
+    backlogs.delete()
+    return Response("delete succsesfully!!!!")
+
+#---------------------------------project------------------------
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def get_proejct_by_id(request,id,pid):
+    
+    a_object = Project.objects.get(pk=pid)
+    serializer = ProjectSerializer(a_object)
+    return Response(serializer.data)
+
+
+#----------------------------------------subject---------------------
+class SubjectView(ModelViewSet):
+    serializer_class = SubjectSerializer
+    def get_queryset(self):
+        subject = Subject.objects.all() 
+        return subject
+    
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def get_subject_with_project(request,id):
+    
+    subject = Subject.objects.get(pk=id)
+    serializer = SubjectWithProjectSerializer(subject)
+    return Response(serializer.data)
+
+#สร้างวิชา by user ? --------
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def create_subject(request):
+    subject_data = request.data
+    subject_data['teacher'] = request.user.id
+
+    serializer = SubjectSerializer(data=subject_data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@authentication_classes([])
+@permission_classes([])
+def subject_update(request,id):
+    subject = Subject.objects.get(pk=id)
+    serializer = SubjectSerializer(instance=subject,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def delete_subject(request,id):
+    subject = Subject.objects.get(pk=id)
+    subject.delete()
+    return Response("delete succsesfully!!!!")
 
 
 
-
-
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes,authentication_classes
-
-from .models import Subject,Project    
-
-
-
-
-
+#-------------------------create Project------------------------
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
@@ -124,66 +258,31 @@ def create_project(request,id):
                 project_name="group" 
             )
             project.save()
+            return Response(status=status.HTTP_201_CREATED)
     else:
         return Response({"message": "You are not authorized to create projects"})
 
 
-
+#-----------------------------join user ------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
-def student_join(request,id,pid):
+def student_join(request,pid):
     project = Project.objects.get(pk=pid)
     project.members.add(
             request.user
         )
     return Response({"message" : "OK"})
-    #project_id = request.data.get('project_id')
-    #if project_id == project :
-    #    project.members.add(
-    #        request.user
-    #    )
-    #else:
-    #    return Response({"message": "project ID is not match"})
     
-
-class SubjectView(ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = SubjectSerializer
-
-    def get_queryset(self):
-        subject = Subject.objects.all() 
-        return subject
-
-    
-
-class ProjectView(ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class  = ProjectSerializer
-
-    def get_queryset(self):
-        project = Project.objects.all() 
-        return project
     
 
 
-class product_backlogs(ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class  = BacklogsSerializer
-    def get_queryset(self):
-        backlogs = ProductBacklogs.objects.all() 
-        return backlogs
+#---------------------------------------Daily Scrum--------------------------------
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def get_dailyscrum(request,id):
     
-
-class DailyView(ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class  = DailyScrumSerializer
-    def get_queryset(self):
-        scrum = Project.objects.all() 
-        return scrum
-    
-    def post(self,request):
-        serializer = DailyScrumSerializer()
-        if serializer.is_valid():
-            serializer.save()
-        return Response(status=status.HTTP_200_OK)
+    daily = DailyScrum.objects.get(pk=id)
+    serializer = DailyScrumSerializer(daily)
+    return Response(serializer.data)
