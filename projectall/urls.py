@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views,user_views
 from rest_framework.authtoken import views as auth_views
 
 urlpatterns = [
@@ -7,7 +7,10 @@ urlpatterns = [
 	path('login', auth_views.obtain_auth_token, name='login'),
     path('logout', views.UserLogout.as_view(), name='logout'),
     path('user', views.UserView.as_view(), name='user'),
-    
+
+#--------------------------------user with project---------------------------------
+    path('user/project', user_views.get_user_project, name='user_projects'),
+
 #--------------------------------subject---------------------------------
     path('subject/', views.SubjectView.as_view({'get': 'list'}), name='subject'),
     path('subject-create/', views.create_subject, name='create_subject'),

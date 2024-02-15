@@ -11,6 +11,7 @@ class AppUser(AbstractUser) :
      role = models.CharField(
           max_length=255,
           choices=AppRole.choices,
+          default=AppRole.STUDENT
      )
      id_student = models.CharField(max_length=8)
      first_name = models.CharField(max_length=255)

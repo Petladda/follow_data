@@ -1,39 +1,6 @@
-# from django.shortcuts import redirect, render
-# from rest_framework import viewsets
-# from django.contrib.auth import get_user_model
-
-# from projectall.forms import ProjectGroupForm
-# from projectall.models import ProjectGroup
-# from .srializers import UserSerializer
-
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     permission_classes = (IsAuthenticated,)
-#     serializer_class = UserSerializer
-#     queryset = get_user_model().objects.all()
-
-
-# def create_project_group(request):
-#     if request.method == 'POST':
-#         form = ProjectGroupForm(request.POST)
-#         if form.is_valid():
-#             subject = form.cleaned_data['subject']
-#             project_count = form.cleaned_data['project_count']
-
-#             # Auto create 
-#             for i in range(project_count):
-#                 group = ProjectGroup(subject=subject, project_count=i+1)
-#                 group.save()
-
-#             #return redirect('success_page')  
-#     else:
-#         form = ProjectGroupForm()
-
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication,TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes,authentication_classes
 from .models import Subject,Project   
@@ -55,6 +22,7 @@ class UserRegister(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -152,7 +120,7 @@ def get_productbacklog_by_bid(request,id,pid,bid):
 def backlog_create(request,id,pid):
     count = request.data.get('count')
     project = Project.objects.get(pk=pid)
-    #serializer = BacklogsSerializer(data=request.data)
+    
     for i in range(count) :
             backlog = ProductBacklog.objects.create(
                 project=project,
@@ -160,7 +128,7 @@ def backlog_create(request,id,pid):
                 status=False
             )
             backlog.save()
-
+    return Response(status=status.HTTP_201_CREATED)
 
 @api_view(['PUT'])
 @authentication_classes([])
@@ -210,20 +178,21 @@ def get_subject_with_project(request,id):
 
 #สร้างวิชา by user ? --------
 @api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def create_subject(request):
-    subject_data = request.data
-    subject_data['teacher'] = request.user.id
 
-    serializer = SubjectSerializer(data=subject_data)
+
+    serializer = SubjectSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        object = serializer.save()
+        object.teacher = request.user
+        object.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@authentication_classes([])
+@authentication_classes([TokenAuthentication])
 @permission_classes([])
 def subject_update(request,id):
     subject = Subject.objects.get(pk=id)
@@ -250,29 +219,28 @@ def delete_subject(request,id):
 def create_project(request,id):
     count = request.data.get('count')
     subject = Subject.objects.get(pk=id)
-    user = AppUser.objects.get(role='TCH')
-    if user.role == 'TCH':
-        for i in range(count) :
-            project = Project.objects.create(
-                subject=subject,
-                project_name="group" 
-            )
-            project.save()
-            return Response(status=status.HTTP_201_CREATED)
-    else:
-        return Response({"message": "You are not authorized to create projects"})
+
+    for i in range(count) :
+        project = Project.objects.create(
+            subject=subject,
+            project_name="group" 
+        )
+        project.save()
+    return Response(status=status.HTTP_201_CREATED)
+   
 
 
-#-----------------------------join user ------------------------------------------------------
+#-----------------------------join project ------------------------------------------------------
 @api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
-def student_join(request,pid):
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def student_join(request,id,pid):
+    
     project = Project.objects.get(pk=pid)
     project.members.add(
             request.user
         )
-    return Response({"message" : "OK"})
+    return Response(status=status.HTTP_201_CREATED)
     
     
 
@@ -286,3 +254,18 @@ def get_dailyscrum(request,id):
     daily = DailyScrum.objects.get(pk=id)
     serializer = DailyScrumSerializer(daily)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_dailyscrum(request):
+
+
+    serializer = DailyScrumSerializer(data=request.data)
+    if serializer.is_valid():
+        object = serializer.save()
+        object.student = request.user
+        object.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

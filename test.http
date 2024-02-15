@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 ###
 
-POST http://127.0.0.1:8000/api/subject/8/project/42/productbacklog-create
+POST http://127.0.0.1:8000/api/subject/8/project/42/productbacklog-create/
 Content-Type: application/json
 
 {

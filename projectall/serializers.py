@@ -7,10 +7,15 @@ from .models import AppUser,DailyScrum,ProductBacklog,Subject,Project,Task
 
 class UserSerializer(serializers.ModelSerializer):
     
+    role = serializers.CharField(read_only=True)
+
     class Meta:
         model = AppUser
-        fields = ['id','username','password','id_student' ,'first_name','last_name']
+        fields = ['id','username','password','id_student' ,'first_name','last_name','role']
         extra_kwargs = {'password': {'write_only': True}}
+        
+
+        
 
     def create(self, validated_data):
         user = AppUser.objects.create(**validated_data)
@@ -64,6 +69,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ['id','members', 'project_name', 'trello_link', 'figma_link','productbacklog_set']
+        
 
 #-------------------------SubjectSerializer----------------------
 class SubjectSerializer(serializers.ModelSerializer):
