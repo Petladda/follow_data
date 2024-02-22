@@ -16,22 +16,35 @@ from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authtoken.models import Token
 
 
-class Test(serializers.ModelSerializer):
-
-    class Meta:
-        model = Project
-        fields = ['id','project_name', 'trello_link', 'figma_link']
         
-
+#----------------------get project by user-------------
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_project(request):
-    print(request.user.id)
-    #user = AppUser.objects.get(pk=id)
+    
     a_object = Project.objects.filter(members__in=[request.user])
-    #a_object = Project.objects.all()
     serializer = ProjectSerializer(a_object,many=True)
-    return Response(serializer.data)
-    #return Response(f"{len(a_object)} {len(serializer.data)}")
+    return Response(serializer.data,status=status.HTTP_201_CREATED)
 
+#----------------------get subject by user-------------
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_subject(request):
+    
+    a_object = Subject.objects.filter(teacher__in=[request.user])
+    serializer = SubjectSerializer(a_object,many=True)
+    return Response(serializer.data,status=status.HTTP_201_CREATED)
+   
+#---------------------remove user----------------
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def student_remove(request,id,pid):
+    
+    project = Project.objects.get(pk=pid)
+    project.members.remove(
+            request.user
+        )
+    return Response(status=status.HTTP_201_CREATED)

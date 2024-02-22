@@ -79,10 +79,15 @@ def get_task(request,id,pid,bid,tid):
 @authentication_classes([])
 @permission_classes([])
 def task_create(request,id,pid,bid):
-    serializer = TaskSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
+    task_id = request.data.get('taskname')
+    product_backlog = ProductBacklog.objects.get(pk=bid)
+    task = Task.objects.create(
+        product_backlog=product_backlog,
+        task_id=task_id,
+        status=False
+        )
+    task.save()
+    return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['PUT'])
@@ -102,7 +107,7 @@ def task_update(request,id,pid,bid,tid):
 def task_delete(request,id,pid,bid,tid):
     tasks = Task.objects.get(pk=tid)
     tasks.delete()
-    return Response("delete succsesfully!!!!")
+    return Response(status=status.HTTP_201_CREATED)
 
 
 #------------------------------backlog----------------------
@@ -147,7 +152,7 @@ def backlog_update(request,id,pid,bid):
 def backlog_delete(request,id,pid,bid):
     backlogs = ProductBacklog.objects.get(pk=bid)
     backlogs.delete()
-    return Response("delete succsesfully!!!!")
+    return Response(status=status.HTTP_201_CREATED)
 
 #---------------------------------project------------------------
 @api_view(['GET'])
@@ -159,6 +164,14 @@ def get_proejct_by_id(request,id,pid):
     serializer = ProjectSerializer(a_object)
     return Response(serializer.data)
 
+
+@api_view(['DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def project_delete(request,id,pid):
+    project = Project.objects.get(pk=pid)
+    project.delete()
+    return Response(status=status.HTTP_201_CREATED)
 
 #----------------------------------------subject---------------------
 class SubjectView(ModelViewSet):
@@ -246,22 +259,27 @@ def student_join(request,id,pid):
 
 
 #---------------------------------------Daily Scrum--------------------------------
+class MeetingView(ModelViewSet):
+    serializer_class = DailyScrumSerializer
+    def get_queryset(self):
+        daily = DailyScrum.objects.all() 
+        return daily
+
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([])
-def get_dailyscrum(request,id):
+def get_stand_up_meeting(request,id,pid,did):
     
-    daily = DailyScrum.objects.get(pk=id)
+    daily = DailyScrum.objects.get(pk=did)
     serializer = DailyScrumSerializer(daily)
-    return Response(serializer.data)
+    return Response(serializer.data,status=status.HTTP_201_CREATED)
+
 
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def create_dailyscrum(request):
-
-
+def create_stand_up_meeting(request):
     serializer = DailyScrumSerializer(data=request.data)
     if serializer.is_valid():
         object = serializer.save()
@@ -269,3 +287,13 @@ def create_dailyscrum(request):
         object.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def delete_stand_up_meeting(request,id,pid,did ):
+    daily = DailyScrum.objects.get(pk=did)
+    daily.delete()
+    return Response(status=status.HTTP_201_CREATED)
+

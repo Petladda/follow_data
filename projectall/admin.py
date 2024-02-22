@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from projectall.models import AppUser,Subject,Project,Student,DailyScrum,ProductBacklog,Task
+from projectall.models import *
 from django.contrib.auth.forms import (
     AdminPasswordChangeForm,
     UserChangeForm,
@@ -12,8 +12,7 @@ from django.utils.translation import gettext_lazy as _
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ["subject_name","teacher"]
 
-class StudentAdmin(admin.ModelAdmin):
-    list_display = ["group","student"]
+
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ["id","project_name","subject"]
@@ -62,7 +61,7 @@ class AppUserAdmin(UserAdmin):
 admin.site.register(AppUser,AppUserAdmin)
 admin.site.register(Subject,SubjectAdmin)
 admin.site.register(Project,ProjectAdmin)
-admin.site.register(Student,StudentAdmin)
+
 admin.site.register(DailyScrum,DailyScrumAdmin)
 admin.site.register(ProductBacklog,ProductBacklogsAdmin)
 admin.site.register(Task,TaskAdmin)

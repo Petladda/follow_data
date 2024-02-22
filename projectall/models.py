@@ -39,20 +39,39 @@ class Project(models.Model) :
 class ProductBacklog(models.Model):
      project = models.ForeignKey(Project , on_delete=models.SET_NULL, null=True,blank=True)
      title_product = models.CharField(max_length=255,default='')
+     description = models.CharField(max_length=255,default='')
      date_to_do = models.DateField(default=datetime.date.today)
+     hour_todo = models.IntegerField(default=0)
      STATUS_CHOICES = (
         (False, 'todo'),
         (False, 'doing'),
         (True, 'done'),
      )
      status = models.BooleanField(choices=STATUS_CHOICES, default='todo', blank=False)
-     date_done = models.DateField(default=datetime.date.today)
      IM_CHOICES = (
         ('mid', 'mid'),
         ('low', 'low'),
         ('hight', 'hight'),
      )
      important = models.CharField(max_length=5, choices=IM_CHOICES, default='low')
+     date_done = models.DateField(default=datetime.date.today)
+     hour_done = models.IntegerField(default=0)
+
+
+class Task(models.Model):
+     product_backlog = models.ForeignKey(ProductBacklog, on_delete=models.CASCADE)
+     task_id = models.CharField(max_length=255)
+     task_name = models.CharField(max_length=255)
+     STATUS_CHOICES = (
+        (False, 'todo'),
+        (False, 'doing'),
+        (True, 'done'),
+     )
+     status = models.BooleanField(choices=STATUS_CHOICES, default='todo', blank=False)
+     date_to_do = models.DateField(default=datetime.date.today)
+     date_done = models.DateField(default=datetime.date.today)
+     hour_todo = models.IntegerField(default=0)
+     hour_done = models.IntegerField(default=0)
 
 
 class  DailyScrum(models.Model) :
@@ -73,76 +92,10 @@ class  DailyScrum(models.Model) :
      def __str__(self):
           return str(self.student)
 
-class Task(models.Model):
-     product_backlog = models.ForeignKey(ProductBacklog, on_delete=models.CASCADE)
-     task_id = models.CharField(max_length=255)
-     task_name = models.CharField(max_length=255)
-     STATUS_CHOICES = (
-        (False, 'todo'),
-        (False, 'doing'),
-        (True, 'done'),
-     )
-     status = models.BooleanField(choices=STATUS_CHOICES, default='todo', blank=False)
 
-
-
-
-class Student(models.Model):
-     student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
-     group = models.ForeignKey(Subject , on_delete=models.SET_NULL, null=True,blank=True)
     
 
 
 
-"""
-class Student(models.Model):
-     student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
-     student_id = models.CharField(max_length=8)
-     first_name = models.CharField(max_length=255)
-     last_name =  models.CharField(max_length=255)
-     
 
-class  DailyScrum(models.Model) :
-     student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
-     date = models.DataField(auto_now_add = True)
-     yesterday = models.CharField(max_length=1000)
-     today = models.CharField(max_length=1000)
-     problem = models.CharField(max_length=1000)
-     NOTE_CHOICES = [
-     ('work', 'วันนี่ทำงาน'),
-     ('sick', 'ป่วย'),
-     ('busy', 'ติดธุระ'),
-     ('pass', 'ตกลงกันว่าวันนี้ไม่ทำงาน'),
-     ]
-     note = models.CharField(max_length=4, choices=NOTE_CHOICES)
-     others = models.TextField(max_length=255)
-
-class ProductBacklogs(models.Model):
-     product = models.ForeignKey(Project , on_delete=models.SET_NULL, null=True,blank=True)
-     #name_backlog = models.CharField(max_length=255,default='')
-     date_to_do = models.DateField(default=datetime.date.today)
-     STATUS_CHOICES = (
-        ('todo', 'To Do'),
-        ('doing', 'Doing'),
-        ('done', 'Done'),
-     )
-     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default='todo')
-     date_done = models.DateField(default=datetime.date.today)
-     IM_CHOICES = (
-        ('low', 'ต่ำ'),
-        ('mid', 'ปานกลาง'),
-        ('hight', 'มาก'),
-     )
-     important = models.CharField(max_length=5, choices=IM_CHOICES, default='low')
-class Tasks(models.Model):
-     product_backlog = models.ForeignKey(ProductBacklogs, on_delete=models.CASCADE)
-     task_id = models.CharField(max_length=255)
-     task_name = models.CharField(max_length=255)
-     '''STATUS_CHOICES = (
-          ('todo', 'To Do'),
-          ('doing', 'Doing'),
-          ('done', 'Done'),
-     )'''
-     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='todo')
-"""
 
