@@ -84,7 +84,7 @@ def task_create(request,id,pid,bid):
     task = Task.objects.create(
         product_backlog=product_backlog,
         task_id=task_id,
-        status=False
+       
         )
     task.save()
     return Response(status=status.HTTP_201_CREATED)
@@ -95,7 +95,7 @@ def task_create(request,id,pid,bid):
 @permission_classes([])
 def task_update(request,id,pid,bid,tid):
     tasks = Task.objects.get(pk=tid)
-    serializer = TaskSerializer(instance=tasks,data=request.data)
+    serializer = TaskSerializer(instance=tasks,data=request.data,partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -130,7 +130,7 @@ def backlog_create(request,id,pid):
             backlog = ProductBacklog.objects.create(
                 project=project,
                 title_product="product backlog",
-                status=False
+               
             )
             backlog.save()
     return Response(status=status.HTTP_201_CREATED)
@@ -140,7 +140,7 @@ def backlog_create(request,id,pid):
 @permission_classes([])
 def backlog_update(request,id,pid,bid):
     backlogs = ProductBacklog.objects.get(pk=bid)
-    serializer = BacklogsSerializer(instance=backlogs,data=request.data)
+    serializer = BacklogsSerializer(instance=backlogs,data=request.data,partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -163,6 +163,16 @@ def get_proejct_by_id(request,id,pid):
     a_object = Project.objects.get(pk=pid)
     serializer = ProjectSerializer(a_object)
     return Response(serializer.data)
+
+@api_view(['PUT'])
+@authentication_classes([])
+@permission_classes([])
+def project_update(request,id,pid):
+    project = Project.objects.get(pk=pid)
+    serializer = ProjectSerializer(instance=project,data=request.data,partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
 
 
 @api_view(['DELETE'])
@@ -195,7 +205,6 @@ def get_subject_with_project(request,id):
 @permission_classes([IsAuthenticated])
 def create_subject(request):
 
-
     serializer = SubjectSerializer(data=request.data)
     if serializer.is_valid():
         object = serializer.save()
@@ -209,7 +218,7 @@ def create_subject(request):
 @permission_classes([])
 def subject_update(request,id):
     subject = Subject.objects.get(pk=id)
-    serializer = SubjectSerializer(instance=subject,data=request.data)
+    serializer = SubjectSerializer(instance=subject,data=request.data,partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -258,7 +267,7 @@ def student_join(request,id,pid):
     
 
 
-#---------------------------------------Daily Scrum--------------------------------
+#---------------------------------------Stand up meeting--------------------------------
 class MeetingView(ModelViewSet):
     serializer_class = DailyScrumSerializer
     def get_queryset(self):
@@ -279,11 +288,15 @@ def get_stand_up_meeting(request,id,pid,did):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def create_stand_up_meeting(request):
+def create_stand_up_meeting(request,id,pid):
+
     serializer = DailyScrumSerializer(data=request.data)
+    
     if serializer.is_valid():
         object = serializer.save()
-        object.student = request.user
+        object.subject = Subject.objects.get(pk=id)
+        object.project = Project.objects.get(pk=pid)
+        object.student = request.user 
         object.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

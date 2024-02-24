@@ -50,7 +50,7 @@ class TaskSerializer(serializers.ModelSerializer):
     
     class Meta: 
         model = Task
-        fields = ['id','product_backlog','task_id','task_name','status','date_to_do','date_done','hour_todo','hour_done']  
+        fields = ['id','product_backlog','task_id','task_name','id_student','status','date_to_do','date_done','hour_todo','hour_done']  
 
 #-------------------------------------BacklogsSerializer-----------------------
 class BacklogsSerializer(serializers.ModelSerializer):
@@ -59,7 +59,12 @@ class BacklogsSerializer(serializers.ModelSerializer):
         model = ProductBacklog
         fields = ['id','title_product','description','date_to_do','status','important','date_done','hour_todo','hour_done','task_set']
 
-
+#---------------------------DailyScrumSerializer--------------------------
+class DailyScrumSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = DailyScrum
+        fields = ['id','student','subject','project','date','yesterday','today','problem','note','others']
 
 #-----------------------ProjectSerializer----------------
 class ProjectSerializer(serializers.ModelSerializer):
@@ -91,9 +96,3 @@ class SubjectWithProjectSerializer(serializers.ModelSerializer):
 
 
 
-#---------------------------DailyScrumSerializer--------------------------
-class DailyScrumSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = DailyScrum
-        fields = ['id','student','date','yesterday','today','problem','note','others']

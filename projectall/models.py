@@ -43,17 +43,17 @@ class ProductBacklog(models.Model):
      date_to_do = models.DateField(default=datetime.date.today)
      hour_todo = models.IntegerField(default=0)
      STATUS_CHOICES = (
-        (False, 'todo'),
-        (False, 'doing'),
-        (True, 'done'),
+        ('todo', 'todo'),
+        ('doing', 'doing'),
+        ('done', 'done'),
      )
-     status = models.BooleanField(choices=STATUS_CHOICES, default='todo', blank=False)
+     status = models.CharField(max_length=5,choices=STATUS_CHOICES, default='todo')
      IM_CHOICES = (
-        ('mid', 'mid'),
+        ('midium', 'midium'),
         ('low', 'low'),
         ('hight', 'hight'),
      )
-     important = models.CharField(max_length=5, choices=IM_CHOICES, default='low')
+     important = models.CharField(max_length=6, choices=IM_CHOICES, default='low')
      date_done = models.DateField(default=datetime.date.today)
      hour_done = models.IntegerField(default=0)
 
@@ -62,12 +62,13 @@ class Task(models.Model):
      product_backlog = models.ForeignKey(ProductBacklog, on_delete=models.CASCADE)
      task_id = models.CharField(max_length=255)
      task_name = models.CharField(max_length=255)
+     id_student = models.CharField(max_length=8,null=True,blank=True)
      STATUS_CHOICES = (
-        (False, 'todo'),
-        (False, 'doing'),
-        (True, 'done'),
+        ('todo', 'todo'),
+        ('doing', 'doing'),
+        ('done', 'done'),
      )
-     status = models.BooleanField(choices=STATUS_CHOICES, default='todo', blank=False)
+     status = models.CharField(max_length=5,choices=STATUS_CHOICES, default='todo')
      date_to_do = models.DateField(default=datetime.date.today)
      date_done = models.DateField(default=datetime.date.today)
      hour_todo = models.IntegerField(default=0)
@@ -76,6 +77,8 @@ class Task(models.Model):
 
 class  DailyScrum(models.Model) :
      student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
+     subject = models.ForeignKey(Subject,on_delete=models.SET_NULL, null=True,blank=True)
+     project = models.ForeignKey(Project,on_delete=models.SET_NULL, null=True,blank=True)
      date = models.DateField(auto_now_add = True)
      yesterday = models.CharField(max_length=1000)
      today = models.CharField(max_length=1000)

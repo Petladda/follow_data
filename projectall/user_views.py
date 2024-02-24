@@ -36,6 +36,16 @@ def get_user_subject(request):
     a_object = Subject.objects.filter(teacher__in=[request.user])
     serializer = SubjectSerializer(a_object,many=True)
     return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+#----------------------get stan up meeting by user-------------
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_stand_up_meeting(request):
+    
+    a_object = DailyScrum.objects.filter(student__in=[request.user])
+    serializer = DailyScrumSerializer(a_object,many=True)
+    return Response(serializer.data,status=status.HTTP_201_CREATED)
    
 #---------------------remove user----------------
 @api_view(['POST'])
