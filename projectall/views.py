@@ -214,7 +214,7 @@ def create_subject(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([])
 @permission_classes([])
 def subject_update(request,id):
     subject = Subject.objects.get(pk=id)
@@ -277,7 +277,7 @@ class MeetingView(ModelViewSet):
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([])
-def get_stand_up_meeting(request,id,pid,did):
+def get_stand_up_meeting(request,did):
     
     daily = DailyScrum.objects.get(pk=did)
     serializer = DailyScrumSerializer(daily)
@@ -305,7 +305,7 @@ def create_stand_up_meeting(request,id,pid):
 @api_view(['DELETE'])
 @authentication_classes([])
 @permission_classes([])
-def delete_stand_up_meeting(request,id,pid,did ):
+def delete_stand_up_meeting(request,did ):
     daily = DailyScrum.objects.get(pk=did)
     daily.delete()
     return Response(status=status.HTTP_201_CREATED)

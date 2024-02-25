@@ -69,11 +69,12 @@ class DailyScrumSerializer(serializers.ModelSerializer):
 #-----------------------ProjectSerializer----------------
 class ProjectSerializer(serializers.ModelSerializer):
     members = UserSerializer(many=True, read_only=True)
-    productbacklog_set = BacklogsSerializer(many=True, read_only=True) 
+    productbacklog_set = BacklogsSerializer(many=True, read_only=True)
+    meeting_set = DailyScrumSerializer(many=True, read_only=True) 
 
     class Meta:
         model = Project
-        fields = ['id','members', 'project_name', 'trello_link', 'figma_link','productbacklog_set']
+        fields = ['id','members','meeting_set', 'project_name', 'trello_link', 'figma_link','productbacklog_set','meeting_set',]
         
 
 #-------------------------SubjectSerializer----------------------

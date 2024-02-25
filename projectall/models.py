@@ -84,12 +84,12 @@ class  DailyScrum(models.Model) :
      today = models.CharField(max_length=1000)
      problem = models.CharField(max_length=1000)
      NOTE_CHOICES = [
-     ('work', 'วันนี่ทำงาน'),
-     ('sick', 'ป่วย'),
-     ('busy', 'ติดธุระ'),
-     ('pass', 'ตกลงกันว่าวันนี้ไม่ทำงาน'),
+     ('วันนี้ทำงาน', 'วันนี้ทำงาน'),
+     ('ป่วย', 'ป่วย'),
+     ('ติดธุระ', 'ติดธุระ'),
+     ('ตกลงกันว่าวันนี้ไม่ทำงาน', 'ตกลงกันว่าวันนี้ไม่ทำงาน'),
      ]
-     note = models.CharField(max_length=4, choices=NOTE_CHOICES)
+     note = models.CharField(max_length=255, choices=NOTE_CHOICES)
      others = models.TextField(max_length=255)
 
      def __str__(self):
