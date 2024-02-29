@@ -26,7 +26,7 @@ class ProductBacklogsAdmin(admin.ModelAdmin):
     list_display = ["project","date_to_do","status","date_done","important"]
 
 class DailyScrumAdmin(admin.ModelAdmin):
-    list_display = ["student","date","yesterday","today","problem","note","others"]
+    list_display = ["student","project","date","yesterday","today","problem","note","others"]
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ["product_backlog","task_id","task_name","status"]

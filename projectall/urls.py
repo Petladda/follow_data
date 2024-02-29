@@ -12,7 +12,9 @@ urlpatterns = [
     path('user/project', user_views.get_user_project, name='user_projects'),
     path('user/subject', user_views.get_user_subject, name='user_subjects'),
     path('subject/<int:id>/project/<int:pid>/remove',user_views.student_remove,name='student_remove'),
-    path('user/stand-up-meeting', user_views.get_user_stand_up_meeting, name='get_user_stand_up_meeting'),
+    path('user/stand-up-meeting/<int:pid>', user_views.get_user_stand_up_meeting, name='get_user_stand_up_meeting'),
+    path('user/change_password', user_views.change_password, name='user_change_password'),
+
 
 #--------------------------------subject---------------------------------
     path('subject/', views.SubjectView.as_view({'get': 'list'}), name='subject'),

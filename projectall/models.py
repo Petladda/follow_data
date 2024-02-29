@@ -24,7 +24,7 @@ class Subject(models.Model):
      subject_name = models.CharField(max_length=255, default='')
     
      def __str__(self):
-          return str(self.subject_name)
+          return f"{self.subject_name}"
 
 class Project(models.Model) :
      subject = models.ForeignKey(Subject , on_delete=models.SET_NULL, null=True,blank=True)
@@ -32,7 +32,9 @@ class Project(models.Model) :
      project_name = models.CharField(max_length=255, default='')
      trello_link = models.URLField(null=True,blank=True)
      figma_link = models.URLField(null=True,blank=True)
-
+     
+     def __str__(self) -> str:
+          return f"{self.subject} - {self.pk}:{self.project_name}"
 
 
 

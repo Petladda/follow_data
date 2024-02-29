@@ -31,7 +31,12 @@ class UserSerializer(serializers.ModelSerializer):
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.save()
-        return instance '''   
+        return instance '''  
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -61,7 +66,7 @@ class BacklogsSerializer(serializers.ModelSerializer):
 
 #---------------------------DailyScrumSerializer--------------------------
 class DailyScrumSerializer(serializers.ModelSerializer):
-    
+    student = UserSerializer( read_only=True)
     class Meta:
         model = DailyScrum
         fields = ['id','student','subject','project','date','yesterday','today','problem','note','others']

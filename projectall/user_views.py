@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import update_session_auth_hash
 
 
         
@@ -41,9 +42,9 @@ def get_user_subject(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user_stand_up_meeting(request):
+def get_user_stand_up_meeting(request,pid):
     
-    a_object = DailyScrum.objects.filter(student__in=[request.user])
+    a_object = DailyScrum.objects.filter(project__pk=pid)
     serializer = DailyScrumSerializer(a_object,many=True)
     return Response(serializer.data,status=status.HTTP_201_CREATED)
    
@@ -58,3 +59,21 @@ def student_remove(request,id,pid):
             request.user
         )
     return Response(status=status.HTTP_201_CREATED)
+
+#---------------------Change password-------------
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    serializer = ChangePasswordSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user
+        if user.check_password(serializer.data.get('old_password')):
+            user.set_password(serializer.data.get('new_password'))
+            user.check_password(serializer.data.get('confirm_password'))
+            user.save()
+            update_session_auth_hash(request, user)  # To update session after password change
+            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
