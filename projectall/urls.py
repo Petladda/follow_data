@@ -22,7 +22,8 @@ urlpatterns = [
     path('subject-delete/<int:id>/', views.delete_subject, name='delete_subject'),
     path('subject-update/<int:id>/', views.subject_update, name='subject_update'),
     path('subject/<int:id>/', views.get_subject_with_project, name='get_subject_with_project'),
-
+    
+#--------------------------------create project----------------------------
     path('subject/<int:id>/create', views.create_project,name="create_project"),
 
 #--------------------------------Project---------------------------------

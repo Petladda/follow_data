@@ -59,6 +59,8 @@ class ProductBacklog(models.Model):
      date_done = models.DateField(default=datetime.date.today)
      hour_done = models.IntegerField(default=0)
 
+     def __str__(self):
+          return f"{self.title_product} - {self.pk}"
 
 class Task(models.Model):
      product_backlog = models.ForeignKey(ProductBacklog, on_delete=models.CASCADE)
@@ -81,7 +83,7 @@ class  DailyScrum(models.Model) :
      student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
      subject = models.ForeignKey(Subject,on_delete=models.SET_NULL, null=True,blank=True)
      project = models.ForeignKey(Project,on_delete=models.SET_NULL, null=True,blank=True)
-     date = models.DateField(auto_now_add = True)
+     date = models.DateField(default=datetime.date.today)
      yesterday = models.CharField(max_length=1000)
      today = models.CharField(max_length=1000)
      problem = models.CharField(max_length=1000)

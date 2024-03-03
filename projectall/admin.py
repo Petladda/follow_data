@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ["subject_name","teacher"]
+    list_display = ["id","subject_name","teacher"]
 
 
 
@@ -23,13 +23,13 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
 class ProductBacklogsAdmin(admin.ModelAdmin):
-    list_display = ["project","date_to_do","status","date_done","important"]
+    list_display = ["id","project","date_to_do","status","date_done","important"]
 
 class DailyScrumAdmin(admin.ModelAdmin):
-    list_display = ["student","project","date","yesterday","today","problem","note","others"]
+    list_display = ["id","student","project","date","yesterday","today","problem","note","others"]
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ["product_backlog","task_id","task_name","status"]
+    list_display = ["id","product_backlog","task_id","task_name","status"]
 
 
 class AppUserAdmin(UserAdmin):

@@ -230,7 +230,7 @@ def subject_update(request,id):
 def delete_subject(request,id):
     subject = Subject.objects.get(pk=id)
     subject.delete()
-    return Response("delete succsesfully!!!!")
+    return Response("delete succsesfully!!!!",status=status.HTTP_201_CREATED)
 
 
 

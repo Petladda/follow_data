@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         
 
         
-
+    #create user role student
     def create(self, validated_data):
         user = AppUser.objects.create(**validated_data)
         user.set_password(validated_data['password'])
@@ -24,6 +24,8 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
+    #แก้ไขข้อมูล User
     '''def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
         instance.password = validated_data.get('password', instance.password)
@@ -85,7 +87,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 #-------------------------SubjectSerializer----------------------
 class SubjectSerializer(serializers.ModelSerializer):
     #project = ProjectSerializer(many=True, read_only=True)
-    #teacher = UserSerializer(many=True, read_only=True)
+    teacher = UserSerializer( read_only=True)
     
     class Meta:
         model = Subject
@@ -94,7 +96,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 class SubjectWithProjectSerializer(serializers.ModelSerializer):
     project_set = ProjectSerializer(many=True, read_only=True)
-    #teacher = UserSerializer(many=True, read_only=True)
+    teacher = UserSerializer( read_only=True)
     
     class Meta:
         model = Subject
