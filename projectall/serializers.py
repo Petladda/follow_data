@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import fields,serializers
 from django.contrib.auth import get_user_model, authenticate
-from .models import AppUser,DailyScrum,ProductBacklog,Subject,Project,Task
+from .models import *
 
 
 

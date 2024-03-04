@@ -11,12 +11,12 @@ from django.utils.translation import gettext_lazy as _
 
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ["id","subject_name","teacher"]
-
+    search_fields = ["subject_name"]
 
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ["id","project_name","subject"]
-
+    search_fields = ["project_name"]
     filter_horizontal = (
         "members",
     
@@ -24,13 +24,14 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class ProductBacklogsAdmin(admin.ModelAdmin):
     list_display = ["id","project","date_to_do","status","date_done","important"]
+    search_fields = ["project"]
 
 class DailyScrumAdmin(admin.ModelAdmin):
     list_display = ["id","student","project","date","yesterday","today","problem","note","others"]
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ["id","product_backlog","task_id","task_name","status"]
-
+    search_fields = ["task_id"]
 
 class AppUserAdmin(UserAdmin):
     list_display = ("username", "email", "first_name", "last_name","role" ,"is_staff")
