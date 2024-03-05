@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes,authentication_classes
 from .models import Subject,Project   
 from django.shortcuts import get_object_or_404
-from .models import AppUser,DailyScrum,ProductBacklog,Subject
+from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.viewsets import ModelViewSet

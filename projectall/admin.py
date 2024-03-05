@@ -34,7 +34,7 @@ class TaskAdmin(admin.ModelAdmin):
     search_fields = ["task_id"]
 
 class AppUserAdmin(UserAdmin):
-    list_display = ("username", "email", "first_name", "last_name","role" ,"is_staff")
+    list_display = ("id","username", "email", "first_name", "last_name","role" ,"is_staff")
 
 
     fieldsets = fieldsets = (
@@ -63,6 +63,6 @@ admin.site.register(AppUser,AppUserAdmin)
 admin.site.register(Subject,SubjectAdmin)
 admin.site.register(Project,ProjectAdmin)
 
-admin.site.register(DailyScrum,DailyScrumAdmin)
+admin.site.register(StandUpMeeting,DailyScrumAdmin)
 admin.site.register(ProductBacklog,ProductBacklogsAdmin)
 admin.site.register(Task,TaskAdmin)

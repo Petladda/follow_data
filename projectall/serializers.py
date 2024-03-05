@@ -70,7 +70,7 @@ class BacklogsSerializer(serializers.ModelSerializer):
 class DailyScrumSerializer(serializers.ModelSerializer):
     student = UserSerializer( read_only=True)
     class Meta:
-        model = DailyScrum
+        model = StandUpMeeting
         fields = ['id','student','subject','project','date','yesterday','today','problem','note','others']
 
 #-----------------------ProjectSerializer----------------

@@ -79,7 +79,7 @@ class Task(models.Model):
      hour_done = models.IntegerField(default=0)
 
 
-class  DailyScrum(models.Model) :
+class  StandUpMeeting(models.Model) :
      student =  models.ForeignKey(AppUser, on_delete=models.SET_NULL, null=True,blank=True)
      subject = models.ForeignKey(Subject,on_delete=models.SET_NULL, null=True,blank=True)
      project = models.ForeignKey(Project,on_delete=models.SET_NULL, null=True,blank=True)
