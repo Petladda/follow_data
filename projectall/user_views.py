@@ -44,7 +44,7 @@ def get_user_subject(request):
 @permission_classes([IsAuthenticated])
 def get_user_stand_up_meeting(request,pid):
     
-    a_object = DailyScrum.objects.filter(project__pk=pid)
+    a_object = StandUpMeeting.objects.filter(project__pk=pid)
     serializer = DailyScrumSerializer(a_object,many=True)
     return Response(serializer.data,status=status.HTTP_201_CREATED)
    
